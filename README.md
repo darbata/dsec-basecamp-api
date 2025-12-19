@@ -7,10 +7,13 @@ This repository stores the source code for an API for DSEC Basecamp. Built to en
 ## Quick Start (Local Development)
 
 1. run `docker-compose up -d`
-2. make api calls to `http://localhost:8000/`
-3. reference documentation via... (to be implemented with OpenAPI)
+2. make api calls to `http://localhost:8080/`
 
-Currently database is not seeded with any data, optionally use [AWS CLI](https://aws.amazon.com/cli/) for development.
+## Documentation
+
+Documentation implemented using Swagger OpenAPI.
+- `http://localhost:8080/api-docs`
+- `http://localhost:8080/swagger-ui/index.html`
 
 ## Acquiring Authentication
 
@@ -20,11 +23,9 @@ To call any endpoint from this API a JWT token is required, acquired from AWS Co
 **Access Token URL:** `https://ap-southeast-2r46bdzlr2.auth.ap-southeast-2.amazoncognito.com/oauth2/token`
 
 ## Tech Stack
-- Java 21
-- Spring Boot
-- AWS Cognito (JWT)
-- Spring Security
-- AWS DynamoDB (NoSQL)
+- Java 21+
+- Spring Boot 4.0.0
+- PostgreSQL 14.19
 
 ## Architecture
 
