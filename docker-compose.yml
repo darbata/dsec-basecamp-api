@@ -1,24 +1,16 @@
-version: '3.8'
 services:
-  dynamodb-local:
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
-    image: "amazon/dynamodb-local:latest"
-    container_name: dynamodb-local
+  postgresql:
+    image: "postgres:latest"
     ports:
-      - "8000:8000"
+      - "5432:5432"
+    env_file:
+      - .env
     volumes:
-      - "./docker/dynamodb:/home/dynamodblocal/data"
-    working_dir: /home/dynamodblocal
+      - ./db-data/:/var/lib/postgresql/data/ # share data with root repo
   app-node:
-    image: darbat/collab:latest
+    image: "dsec/basecamp-api:latest"
     container_name: app-node
     ports:
       - "8080:8080"
     depends_on:
-      - "dynamodb-local"
-    links:
-      - "dynamodb-local"
-    environment:
-      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
-      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
-      REGION: 'ap-southeast-2'
+      - "postgresql"
