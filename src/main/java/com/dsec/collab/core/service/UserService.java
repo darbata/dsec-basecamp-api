@@ -14,14 +14,13 @@ public class UserService implements UserApi {
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
+
         this.userRepository = userRepository;
     }
 
-
     @Override
     public User getOrCreateUser(UUID id) {
-        // todo: just return OR create
-        return userRepository.getUser(id);
+        return userRepository.findById(id);
     }
 
     @Override

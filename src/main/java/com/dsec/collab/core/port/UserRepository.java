@@ -5,6 +5,6 @@ import com.dsec.collab.core.domain.user.User;
 import java.util.UUID;
 
 public interface UserRepository {
-    public User getUser(UUID id); // rehydrating user
-    public User updateUser(UUID id, User user); // the id may never update
+    public User findById(UUID id); // rehydrating user
+    public User save(UUID id, User user); // the id may never update
 }
