@@ -5,27 +5,27 @@ import java.util.UUID;
 public class User {
     private final UUID id;
     private final String email;
-    private final String username;
+    private final String name;
 
-    private User(UUID id, String email, String username) {
+    private User(UUID id, String email, String name) {
         this.id = id;
         this.email = email;
-        this.username = username;
+        this.name = name;
     }
 
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return this.name;
     }
 
-    public static User UserFactory(UUID id, String email, String username) {
-        return new User(id, email, username);
+    public static User UserFactory(UUID id, String email, String name) {
+        return new User(id, email, name);
     }
 }

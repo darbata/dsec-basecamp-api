@@ -11,12 +11,16 @@ import java.util.UUID;
 @Service
 public class UserService implements UserApi {
 
-    public UserService() {}
+    private final UserRepository userRepository;
 
+    public UserService(UserRepository userRepository) {
+
+        this.userRepository = userRepository;
+    }
 
     @Override
     public User getOrCreateUser(UUID id) {
-        return null;
+        return userRepository.findById(id);
     }
 
     @Override
