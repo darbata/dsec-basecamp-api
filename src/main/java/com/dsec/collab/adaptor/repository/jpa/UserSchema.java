@@ -1,6 +1,5 @@
 package com.dsec.collab.adaptor.repository.jpa;
 
-import com.dsec.collab.core.domain.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -22,4 +21,13 @@ public class UserSchema {
     private UUID id;
     private String email;
     private String name;
+
+    private boolean githubConnected;
+    private long githubId;
+    private String githubUser;
+    private String githubUrl;
+    private String githubAvatarUrl;
+
+    private boolean isAdmin;
+    private boolean isMember;
 }

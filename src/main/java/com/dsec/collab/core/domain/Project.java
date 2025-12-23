@@ -1,4 +1,4 @@
-package com.dsec.collab.core.domain.project;
+package com.dsec.collab.core.domain;
 
 import java.util.UUID;
 

@@ -56,6 +56,11 @@
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
         <dependency>
+            <groupId>zone.cogni.lib.httpheaders</groupId>
+            <artifactId>httpheaders</artifactId>
+            <version>0.2.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
