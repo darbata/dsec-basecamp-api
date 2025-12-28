@@ -35,12 +35,6 @@ public class UserController {
             String email = jwt.getClaimAsString("email");
             String name = jwt.getClaimAsString("name");
 
-            System.out.println(jwt);
-
-            System.out.println(id);
-            System.out.println(email);
-            System.out.println(name);
-
             // use the service to get the user from persistence
             User user = userApi.getOrCreateUser(id, email, name);
             System.out.println("hit /api/users/profile");
