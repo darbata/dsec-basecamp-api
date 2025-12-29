@@ -1,14 +1,15 @@
 package com.dsec.collab.core.service;
 
+import com.dsec.collab.adaptor.http.GithubUserAccessToken;
+import com.dsec.collab.adaptor.http.GithubUserProfile;
 import com.dsec.collab.core.domain.GithubAccessToken;
-import com.dsec.collab.core.domain.TenantUserProfile;
+import com.dsec.collab.core.domain.GithubProfile;
 import com.dsec.collab.core.domain.User;
-import com.dsec.collab.core.port.TenantProxy;
+import com.dsec.collab.core.port.IGithubProxy;
 import com.dsec.collab.core.port.UserApi;
 import com.dsec.collab.core.port.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,66 +17,54 @@ import java.util.UUID;
 public class UserService implements UserApi {
 
     private final UserRepository userRepository;
-    private final TenantProxy tenantProxy;
+    private final IGithubProxy githubProxy;
 
-    public UserService(UserRepository userRepository, TenantProxy tenantProxy) {
+    public UserService(UserRepository userRepository, IGithubProxy githubProxy) {
         this.userRepository = userRepository;
-        this.tenantProxy = tenantProxy;
+        this.githubProxy = githubProxy;
     }
 
     @Override
     public User getOrCreateUser(UUID id, String email, String name) {
-       Optional<User> user = userRepository.findById(id);
-
-       if (user.isPresent()) {
-           System.out.println("Found user, returning them");
-           return user.get();
-       } else {
-           System.out.println("User not found, creating new and returning");
-           User newUser = User.create(id, email, name);
-           return userRepository.save(newUser);
-       }
-
+        return userRepository.findById(id).orElseGet(() -> {
+            try {
+                User newUser = User.create(id, email, name);
+                return userRepository.save(newUser);
+            } catch (Exception e) {
+                return userRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("No user with id: " + id));
+            }
+        });
     }
 
     @Override
-    public User connectTenant(UUID id, String code) {
-        try {
+    public void connectGithub(UUID id, String code) {
 
-            GithubAccessToken tenantToken = this.tenantProxy.tokenExchange(code);
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user with id: " + id));
 
-            // save token details to user profile
 
-            TenantUserProfile tenantUserProfile = this.tenantProxy.queryAuthenticatedUser(tenantToken);
+        // query github
+        GithubUserAccessToken token = this.githubProxy.tokenExchange(code);
+        GithubUserProfile profile = this.githubProxy.queryAuthenticatedUser(token.accessToken());
 
-            User user = userRepository.findById(id).orElse(null);
+        // save profile found and token to db
+        user.setGithubAccessToken(GithubAccessToken.create(
+                token.accessToken(),
+                token.expiresIn(),
+                token.refreshToken(),
+                token.refreshTokenExpiresIn(),
+                token.scope(),
+                token.tokenType()
+        ));
 
-            assert user != null;
+        user.setGithubProfile(GithubProfile.create(
+                profile.githubId(),
+                profile.githubUsername(),
+                profile.githubUrl(),
+                profile.githubAvatarUrl()
+        ));
 
-            user.setIsGithubConnected(true);
-            user.setGithubId(tenantUserProfile.getTenantId());
-            user.setGithubUser(tenantUserProfile.getTenantUsername());
-            user.setGithubUrl(tenantUserProfile.getTenantUrl());
-            user.setGithubAvatarUrl(tenantUserProfile.getTenantAvatarUrl());
 
-            return userRepository.save(user);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
+        userRepository.save(user);
     }
-
-    @Override
-    public User putUser(String id, String email, String username) {
-        return null;
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return List.of();
-    }
-
-
-
 }

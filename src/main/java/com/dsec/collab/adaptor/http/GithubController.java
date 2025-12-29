@@ -26,7 +26,7 @@ public class GithubController {
             @RequestBody GithubCode githubCode
     ) {
         UUID id = UUID.fromString(jwt.getClaimAsString("sub"));
-        userApi.connectTenant(id, githubCode.getCode());
+        userApi.connectGithub(id, githubCode.getCode());
         return HttpStatus.CREATED;
     }
 

@@ -1,7 +1,6 @@
 package com.dsec.collab.adaptor.http;
 
-import com.dsec.collab.core.domain.GithubAccessToken;
-import com.dsec.collab.core.port.TenantProxy;
+import com.dsec.collab.core.port.IGithubProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class GithubProxy implements TenantProxy {
+public class GithubProxy implements IGithubProxy {
 
 
     @Value("${spring.security.oauth2.client.github.client-id}")
@@ -28,7 +27,7 @@ public class GithubProxy implements TenantProxy {
     }
 
     @Override
-    public GithubToken tokenExchange(String code) {
+    public GithubUserAccessToken tokenExchange(String code) {
         // github url to exchange code for token
         URI uri = URI.create("https://github.com/login/oauth/access_token");
 
@@ -43,27 +42,18 @@ public class GithubProxy implements TenantProxy {
 
         HttpEntity<Map<String, String>> request = new HttpEntity<>(parameters, headers);
 
-        GithubToken githubToken = restTemplate.postForObject(uri, request, GithubToken.class);
-
-        return githubToken;
+        return restTemplate.postForObject(uri, request, GithubUserAccessToken.class);
     }
 
     @Override
-    public GithubUserProfile queryAuthenticatedUser(GithubAccessToken token) {
+    public GithubUserProfile queryAuthenticatedUser(String accessToken) {
         URI uri = URI.create("https://api.github.com/user");
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token.getAccessToken());
+        headers.setBearerAuth(accessToken);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<Map> response = restTemplate.exchange(
-                uri,
-                HttpMethod.GET,
-                entity,
-                Map.class
-        );
 
         return restTemplate.exchange(uri, HttpMethod.GET, entity, GithubUserProfile.class).getBody();
     }

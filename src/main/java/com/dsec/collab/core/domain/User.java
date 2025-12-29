@@ -51,21 +51,21 @@ public class User {
         this.githubAccessToken = githubAccessToken;
     }
 
-    public GithubProfile getGithubUserProfile() {
+    public GithubProfile getGithubProfile() {
         return this.githubProfile;
     }
 
-    public void setGithubUserProfile(GithubProfile githubUserProfile) {
-        this.githubProfile = githubUserProfile;
+    public void setGithubProfile(GithubProfile githubProfile) {
+        this.githubProfile = githubProfile;
     }
 
     public Project createProject(String repositoryLink, String title, String description) {
         return Project.create(this.id, repositoryLink, title, description);
     }
 
-    public static User create(String email, String name) {
+    public static User create(UUID id, String email, String name) {
         return new User(
-                UUID.randomUUID(),
+                Objects.requireNonNull(id),
                 Objects.requireNonNull(email),
                 Objects.requireNonNull(name),
                 null,

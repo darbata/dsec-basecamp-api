@@ -51,7 +51,7 @@ public class JpaUserRepository implements UserRepository {
                     githubProfileSchema.getGithubAvatarUrl()
             );
 
-            user.setGithubUserProfile(githubProfile);
+            user.setGithubProfile(githubProfile);
         }
 
         if (userSchema.getGithubAccessTokenSchema() != null) {
@@ -80,13 +80,13 @@ public class JpaUserRepository implements UserRepository {
         userSchema.setEmail(user.getEmail());
         userSchema.setName(user.getName());
 
-        if (user.getGithubUserProfile() != null) {
+        if (user.getGithubProfile() != null) {
             GithubProfileSchema githubProfileSchema = new GithubProfileSchema();
 
-            githubProfileSchema.setGithubId(user.getGithubUserProfile().getId());
-            githubProfileSchema.setGithubUsername(user.getGithubUserProfile().getUsername());
-            githubProfileSchema.setGithubUrl(user.getGithubUserProfile().getUrl());
-            githubProfileSchema.setGithubAvatarUrl(user.getGithubUserProfile().getAvatarUrl());
+            githubProfileSchema.setGithubId(user.getGithubProfile().getId());
+            githubProfileSchema.setGithubUsername(user.getGithubProfile().getUsername());
+            githubProfileSchema.setGithubUrl(user.getGithubProfile().getUrl());
+            githubProfileSchema.setGithubAvatarUrl(user.getGithubProfile().getAvatarUrl());
 
 
             githubProfileSchema.setUserSchema(userSchema);
