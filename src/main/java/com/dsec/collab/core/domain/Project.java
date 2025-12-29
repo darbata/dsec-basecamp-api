@@ -53,9 +53,6 @@ public class Project {
     }
 
     public static Project create(UUID ownerId, String repositoryLink, String title, String description) {
-
-
-
         return new Project(
                 UUID.randomUUID(),
                 Objects.requireNonNull(ownerId),
