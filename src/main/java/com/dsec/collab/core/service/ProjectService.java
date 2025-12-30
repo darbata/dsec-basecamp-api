@@ -9,9 +9,9 @@ import java.util.UUID;
 
 @Service
 public class ProjectService implements ProjectApi {
+
     @Override
     public Project getProject(UUID projectId) {
-        return null;
     }
 
     @Override
