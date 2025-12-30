@@ -6,4 +6,5 @@ import com.dsec.collab.adaptor.http.GithubUserProfile;
 public interface IGithubProxy {
     GithubUserAccessToken tokenExchange(String code);
     GithubUserProfile queryAuthenticatedUser(String accessToken);
+    String getRepositoryLink(long repositoryId);
 }

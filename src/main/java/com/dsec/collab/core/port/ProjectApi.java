@@ -10,7 +10,7 @@ public interface ProjectApi {
     Project getProject(UUID projectId);
     Project createProject(UUID userId, long githubRepositoryId, String title, String description);
     Project updateProject(UUID userId, UUID projectId, String title, String description);
-    Project deleteProject(UUID userId, UUID projectId);
+    void deleteProject(UUID userId, UUID projectId);
 
     Project setProjectFeatured(UUID projectId);
     Project setProjectCommunity(UUID projectId);

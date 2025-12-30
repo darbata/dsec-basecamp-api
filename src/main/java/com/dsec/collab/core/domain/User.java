@@ -59,10 +59,6 @@ public class User {
         this.githubProfile = githubProfile;
     }
 
-    public Project createProject(String repositoryLink, String title, String description) {
-        return Project.create(this.id, repositoryLink, title, description);
-    }
-
     public static User create(UUID id, String email, String name) {
         return new User(
                 Objects.requireNonNull(id),

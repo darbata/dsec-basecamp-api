@@ -13,7 +13,6 @@ import java.util.Map;
 @Service
 public class GithubProxy implements IGithubProxy {
 
-
     @Value("${spring.security.oauth2.client.github.client-id}")
     private String githubClientId;
 
@@ -56,6 +55,11 @@ public class GithubProxy implements IGithubProxy {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(uri, HttpMethod.GET, entity, GithubUserProfile.class).getBody();
+    }
+
+    @Override
+    public String getRepositoryLink(long repositoryId) {
+        return "";
     }
 
 }
