@@ -1,16 +1,12 @@
 package com.dsec.collab.adaptor.http;
 
 import com.dsec.collab.core.domain.GithubAccessToken;
-import com.dsec.collab.core.domain.GithubProfile;
 import com.dsec.collab.core.port.IGithubProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
 
-import static org.springframework.http.MediaType.*;
+import java.util.List;
 
 @Service
 public class GithubProxy implements IGithubProxy {
@@ -21,92 +17,63 @@ public class GithubProxy implements IGithubProxy {
     @Value("${spring.security.oauth2.client.github.client-secret}")
     private String githubClientSecret;
 
-    private final RestClient restClient;
+    private final GithubApiClient githubApiClient;
 
-    public GithubProxy(RestClient restClient) {
-        this.restClient = restClient;
+    public GithubProxy(GithubApiClient githubApiClient) {
+        this.githubApiClient = githubApiClient;
     }
 
     @Override
-    public GithubAccessToken tokenExchange(String code) {
-
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("client_id", githubClientId);
-        parameters.add("client_secret", githubClientSecret);
-        parameters.add("code", code);
-
-        GithubProxyAccessToken proxyToken = restClient.post()
-                .uri("https://github.com/login/oauth/access_token")
-                .contentType(APPLICATION_FORM_URLENCODED)
-                .accept(APPLICATION_JSON)
-                .body(parameters)
-                .retrieve()
-                .body(GithubProxyAccessToken.class);
-
-        return toDomain(proxyToken);
-
+    public GithubAccessTokenDTO tokenExchange(String code) {
+        return githubApiClient.exchangeToken(
+                githubClientId,
+                githubClientSecret,
+                code
+        );
     }
 
     @Override
-    public GithubAccessToken refreshToken(GithubAccessToken token) {
-
-
-
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("client_id", githubClientId);
-        parameters.add("client_secret", githubClientSecret);
-        parameters.add("grant_type", "refresh_token");
-        parameters.add("refresh_token", token.getRefreshToken());
-
-        GithubProxyAccessToken proxyToken = restClient.post()
-                .uri("https://github.com/login/oauth/access_token")
-                .contentType(APPLICATION_FORM_URLENCODED)
-                .accept(APPLICATION_JSON)
-                .body(parameters)
-                .retrieve()
-                .body(GithubProxyAccessToken.class);
-
-        return toDomain(proxyToken);
+    public GithubAccessTokenDTO refreshToken(String refreshToken) {
+        return githubApiClient.refreshToken(
+                githubClientId,
+                githubClientSecret,
+                "refresh_token",
+                refreshToken
+        );
     }
 
+    @Override
+    public GithubProfileDTO queryAuthenticatedUser(GithubAccessToken token) {
+        return githubApiClient.getUserProfile("Bearer " + token.getAccessToken());
+    }
 
     @Override
-    public GithubProfile queryAuthenticatedUser(GithubAccessToken token) {
+    public List<GithubRepositoryDTO> getUserOwnedRepositories(GithubAccessToken token) {
+        // prefer max page count so less api calls required
+        return githubApiClient.getUserRepositories(
+                "Bearer " + token.getAccessToken(),
+                "owner",
+                100,
+                0
+        );
+    }
 
-        GithubProxyUserProfile userProfile = restClient.get()
-                .uri("https://api.github.com/user")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.getAccessToken())
-                .accept(APPLICATION_JSON)
-                .retrieve()
-                .body(GithubProxyUserProfile.class);
-
-        return toDomain(userProfile);
-
+    @Override
+    public List<GithubRepositoryDTO> getUserOwnedRepositories(GithubAccessToken token, int page) {
+        return githubApiClient.getUserRepositories(
+                "Bearer " + token.getAccessToken(),
+                "owner",
+                100,
+                page
+        );
     }
 
     @Override
     public String getRepositoryLink(GithubAccessToken token, long repositoryId) {
-        return "";
-    }
-
-    private GithubAccessToken toDomain(GithubProxyAccessToken proxyToken) {
-        return GithubAccessToken.create(
-                proxyToken.accessToken(),
-                proxyToken.expiresIn(),
-                proxyToken.refreshToken(),
-                proxyToken.refreshTokenExpiresIn(),
-                proxyToken.scope(),
-                proxyToken.tokenType()
+        GithubRepositoryDTO repo =  githubApiClient.getRepository(
+                "Bearer " + token.getAccessToken(),
+                repositoryId
         );
+        return repo.url();
     }
-
-    private GithubProfile toDomain(GithubProxyUserProfile proxyUserProfile) {
-        return GithubProfile.create(
-                    proxyUserProfile.githubId(),
-                    proxyUserProfile.githubUsername(),
-                    proxyUserProfile.githubUrl(),
-                    proxyUserProfile.githubAvatarUrl()
-                );
-    }
-
 }

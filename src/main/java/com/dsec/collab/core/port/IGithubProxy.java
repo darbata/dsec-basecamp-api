@@ -1,11 +1,17 @@
 package com.dsec.collab.core.port;
 
+import com.dsec.collab.adaptor.http.GithubAccessTokenDTO;
+import com.dsec.collab.adaptor.http.GithubProfileDTO;
+import com.dsec.collab.adaptor.http.GithubRepositoryDTO;
 import com.dsec.collab.core.domain.GithubAccessToken;
-import com.dsec.collab.core.domain.GithubProfile;
+
+import java.util.List;
 
 public interface IGithubProxy {
-    GithubAccessToken tokenExchange(String code);
-    GithubAccessToken refreshToken(GithubAccessToken accessToken);
-    GithubProfile queryAuthenticatedUser(GithubAccessToken token);
+    GithubAccessTokenDTO tokenExchange(String code);
+    GithubAccessTokenDTO refreshToken(String refreshToken);
+    GithubProfileDTO queryAuthenticatedUser(GithubAccessToken token);
+    List<GithubRepositoryDTO> getUserOwnedRepositories(GithubAccessToken token); // default
+    List<GithubRepositoryDTO> getUserOwnedRepositories(GithubAccessToken token, int page); // if a page is requested
     String getRepositoryLink(GithubAccessToken token, long repositoryId);
 }

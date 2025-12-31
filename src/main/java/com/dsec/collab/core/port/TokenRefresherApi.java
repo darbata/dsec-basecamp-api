@@ -1,4 +1,4 @@
-package com.dsec.collab.core.service;
+package com.dsec.collab.core.port;
 
 import com.dsec.collab.core.domain.User;
 
