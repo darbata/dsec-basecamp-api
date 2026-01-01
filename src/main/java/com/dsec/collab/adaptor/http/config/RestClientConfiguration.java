@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.adaptor.http.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

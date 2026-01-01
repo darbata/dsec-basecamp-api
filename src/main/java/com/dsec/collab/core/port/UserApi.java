@@ -1,7 +1,7 @@
 package com.dsec.collab.core.port;
 
-import com.dsec.collab.adaptor.http.GithubRepositoryDTO;
-import com.dsec.collab.adaptor.http.UserDTO;
+import com.dsec.collab.adaptor.http.dto.GithubRepositoryDTO;
+import com.dsec.collab.adaptor.http.dto.UserDTO;
 
 import java.util.List;
 import java.util.UUID;

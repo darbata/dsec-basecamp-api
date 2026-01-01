@@ -1,5 +1,8 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.adaptor.http.controller;
 
+import com.dsec.collab.adaptor.http.dto.ProjectDTO;
+import com.dsec.collab.adaptor.http.request.UpdateProjectRequestDTO;
+import com.dsec.collab.adaptor.http.request.CreateProjectRequestDTO;
 import com.dsec.collab.core.exception.GithubAuthenticationException;
 import com.dsec.collab.core.exception.GithubRepositoryIdUsedException;
 import com.dsec.collab.core.port.ProjectApi;

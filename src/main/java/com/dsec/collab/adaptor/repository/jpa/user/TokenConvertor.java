@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.repository.jpa;
+package com.dsec.collab.adaptor.repository.jpa.user;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

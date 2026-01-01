@@ -1,6 +1,6 @@
 package com.dsec.collab.core.service;
 
-import com.dsec.collab.adaptor.http.GithubAccessTokenDTO;
+import com.dsec.collab.adaptor.http.dto.GithubAccessTokenDTO;
 import com.dsec.collab.core.domain.User;
 import com.dsec.collab.core.exception.GithubAuthenticationException;
 import com.dsec.collab.core.port.IDTOMapper;
@@ -8,8 +8,6 @@ import com.dsec.collab.core.port.IGithubProxy;
 import com.dsec.collab.core.port.TokenRefresherApi;
 import com.dsec.collab.core.port.UserRepository;
 import org.springframework.stereotype.Service;
-
-import javax.naming.NoPermissionException;
 
 
 @Service

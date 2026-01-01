@@ -1,9 +1,9 @@
 package com.dsec.collab.core.service;
 
-import com.dsec.collab.adaptor.http.GithubAccessTokenDTO;
-import com.dsec.collab.adaptor.http.GithubProfileDTO;
-import com.dsec.collab.adaptor.http.ProjectDTO;
-import com.dsec.collab.adaptor.http.UserDTO;
+import com.dsec.collab.adaptor.http.dto.GithubAccessTokenDTO;
+import com.dsec.collab.adaptor.http.dto.GithubProfileDTO;
+import com.dsec.collab.adaptor.http.dto.ProjectDTO;
+import com.dsec.collab.adaptor.http.dto.UserDTO;
 import com.dsec.collab.core.domain.GithubAccessToken;
 import com.dsec.collab.core.domain.GithubProfile;
 import com.dsec.collab.core.domain.Project;

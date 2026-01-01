@@ -1,6 +1,7 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.adaptor.http.controller;
 
-import com.dsec.collab.core.domain.User;
+import com.dsec.collab.adaptor.http.dto.UserDTO;
+import com.dsec.collab.adaptor.http.dto.GithubRepositoryDTO;
 import com.dsec.collab.core.port.UserApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,8 @@ public class UserController {
         this.userApi = userApi;
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
-    }
-
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
         // function to get the current user (id from JWT token) details from the db
         try {
 
@@ -48,9 +44,13 @@ public class UserController {
     }
 
     @GetMapping("/repos")
-    public ResponseEntity<List<GithubRepositoryDTO>> getUserGithubRepositories(@AuthenticationPrincipal Jwt jwt) {
-        List<GithubRepositoryDTO> repos = userApi.getUserRepositories(UUID.fromString(jwt.getClaimAsString("sub")));
-        return new ResponseEntity<>(repos, HttpStatus.OK);
-    }
+    public ResponseEntity<?> getUserGithubRepositories(@AuthenticationPrincipal Jwt jwt) {
+        try {
+            List<GithubRepositoryDTO> repos = userApi.getUserRepositories(UUID.fromString(jwt.getClaimAsString("sub")));
+            return new ResponseEntity<>(repos, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
+    }
 }

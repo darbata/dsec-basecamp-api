@@ -1,5 +1,6 @@
-package com.dsec.collab.adaptor.repository.jpa;//    private final UUID id;
+package com.dsec.collab.adaptor.repository.jpa.project;//    private final UUID id;
 
+import com.dsec.collab.adaptor.repository.jpa.user.UserSchema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.dsec.collab.core.port;
 
-import com.dsec.collab.adaptor.http.ProjectDTO;
+import com.dsec.collab.adaptor.http.dto.ProjectDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;

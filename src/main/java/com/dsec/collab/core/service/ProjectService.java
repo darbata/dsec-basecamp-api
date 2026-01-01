@@ -1,6 +1,6 @@
 package com.dsec.collab.core.service;
 
-import com.dsec.collab.adaptor.http.GithubRepositoryDTO; import com.dsec.collab.adaptor.http.ProjectDTO;
+import com.dsec.collab.adaptor.http.dto.ProjectDTO;
 import com.dsec.collab.core.domain.Project;
 import com.dsec.collab.core.domain.User;
 import com.dsec.collab.core.exception.GithubAuthenticationException;
@@ -11,8 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.naming.NoPermissionException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

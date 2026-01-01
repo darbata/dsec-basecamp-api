@@ -1,5 +1,6 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.adaptor.http.controller;
 
+import com.dsec.collab.adaptor.http.proxy.GithubCode;
 import com.dsec.collab.core.port.UserApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

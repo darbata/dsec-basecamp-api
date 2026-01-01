@@ -1,5 +1,7 @@
-package com.dsec.collab.adaptor.repository.jpa;
+package com.dsec.collab.adaptor.repository.jpa.project;
 
+import com.dsec.collab.adaptor.repository.jpa.user.JpaUserSchemaRepository;
+import com.dsec.collab.adaptor.repository.jpa.user.UserSchema;
 import com.dsec.collab.core.domain.Project;
 import com.dsec.collab.core.port.ProjectRepository;
 import org.springframework.data.domain.Page;

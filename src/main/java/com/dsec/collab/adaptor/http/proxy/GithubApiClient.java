@@ -1,5 +1,8 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.adaptor.http.proxy;
 
+import com.dsec.collab.adaptor.http.dto.GithubProfileDTO;
+import com.dsec.collab.adaptor.http.dto.GithubRepositoryDTO;
+import com.dsec.collab.adaptor.http.dto.GithubAccessTokenDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;

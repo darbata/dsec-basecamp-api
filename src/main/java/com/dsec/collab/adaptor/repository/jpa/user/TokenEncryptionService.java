@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.repository.jpa;
+package com.dsec.collab.adaptor.repository.jpa.user;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.encrypt.Encryptors;

@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.core.port;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;

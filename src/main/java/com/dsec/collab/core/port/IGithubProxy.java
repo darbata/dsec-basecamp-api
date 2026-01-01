@@ -1,8 +1,8 @@
 package com.dsec.collab.core.port;
 
-import com.dsec.collab.adaptor.http.GithubAccessTokenDTO;
-import com.dsec.collab.adaptor.http.GithubProfileDTO;
-import com.dsec.collab.adaptor.http.GithubRepositoryDTO;
+import com.dsec.collab.adaptor.http.dto.GithubAccessTokenDTO;
+import com.dsec.collab.adaptor.http.dto.GithubProfileDTO;
+import com.dsec.collab.adaptor.http.dto.GithubRepositoryDTO;
 import com.dsec.collab.core.domain.GithubAccessToken;
 
 import java.util.List;

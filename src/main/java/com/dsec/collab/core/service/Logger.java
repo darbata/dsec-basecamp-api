@@ -1,5 +1,6 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.core.service;
 
+import com.dsec.collab.core.port.ILogger;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;

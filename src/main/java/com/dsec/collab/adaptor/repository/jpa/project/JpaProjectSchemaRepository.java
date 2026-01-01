@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.repository.jpa;
+package com.dsec.collab.adaptor.repository.jpa.project;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

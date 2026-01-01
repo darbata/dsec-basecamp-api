@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.repository.jpa;
+package com.dsec.collab.adaptor.repository.jpa.user;
 
 import com.dsec.collab.core.domain.GithubAccessToken;
 import com.dsec.collab.core.domain.GithubProfile;

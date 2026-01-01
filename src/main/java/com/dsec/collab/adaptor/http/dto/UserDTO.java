@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.adaptor.http.dto;
 
 import java.util.UUID;
 

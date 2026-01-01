@@ -1,4 +1,4 @@
-package com.dsec.collab.adaptor.http;
+package com.dsec.collab.adaptor.http.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
