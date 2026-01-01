@@ -49,13 +49,122 @@ public class ProjectController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<Page<ProjectDTO>> getAllProjects(
+    public ResponseEntity<?> getAllProjects(
             @RequestParam(name="page", defaultValue="0") int pageNum,
             @RequestParam(name="page_size", defaultValue="50") int pageSize
     ) {
-        Page<ProjectDTO> page = projectApi.getAllProjects(pageNum, pageSize);
-        return new ResponseEntity<>(page, HttpStatus.OK);
+        try {
+            Page<ProjectDTO> page = projectApi.getAllProjects(pageNum, pageSize);
+            return new ResponseEntity<>(page, HttpStatus.OK);
+        } catch (GithubAuthenticationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/featured")
+    public ResponseEntity<?> getFeaturedProjects(
+            @RequestParam(name="page", defaultValue="0") int pageNum,
+            @RequestParam(name="page_size", defaultValue="50") int pageSize
+    ) {
+        try {
+            Page<ProjectDTO> page = projectApi.getFeaturedProjects(pageNum, pageSize);
+            return new ResponseEntity<>(page, HttpStatus.OK);
+        } catch (GithubAuthenticationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/community")
+    public ResponseEntity<?> getCommunityProjects(
+            @RequestParam(name="page", defaultValue="0") int pageNum,
+            @RequestParam(name="page_size", defaultValue="50") int pageSize
+    ) {
+        try {
+            Page<ProjectDTO> page = projectApi.getCommunityProjects(pageNum, pageSize);
+            return new ResponseEntity<>(page, HttpStatus.OK);
+        } catch (GithubAuthenticationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProject(
+            @PathVariable UUID id
+    ) {
+        try {
+            ProjectDTO dto = projectApi.getProject(id);
+            return ResponseEntity
+                    .status(HttpStatus.FOUND)
+                    .body(Map.of("project", dto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProject(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id
+    ) {
+        try {
+            UUID userId = UUID.fromString(jwt.getClaimAsString("sub"));
+            projectApi.deleteProject(userId, id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProject(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id,
+            @RequestBody UpdateProjectRequestDTO requestDTO
+    ) {
+        try {
+            UUID userId = UUID.fromString(jwt.getClaimAsString("sub"));
+
+            projectApi.updateProject(
+                        userId,
+                        id,
+                        requestDTO.title(),
+                        requestDTO.description()
+                    );
+
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/{id}/featured")
+    public ResponseEntity<?> setProjectFeatured(
+            @PathVariable UUID id
+    ) {
+        try {
+            projectApi.setProjectFeatured(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/{id}/community")
+    public ResponseEntity<?> setProjectCommunity(
+            @PathVariable UUID id
+    ) {
+        try {
+            projectApi.setProjectCommunity(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
