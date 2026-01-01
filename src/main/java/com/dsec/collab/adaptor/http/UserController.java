@@ -8,10 +8,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserApi userApi;
@@ -35,17 +36,8 @@ public class UserController {
             String email = jwt.getClaimAsString("email");
             String name = jwt.getClaimAsString("name");
 
-            System.out.println(jwt);
-
-            System.out.println(id);
-            System.out.println(email);
-            System.out.println(name);
-
             // use the service to get the user from persistence
-            User user = userApi.getOrCreateUser(id, email, name);
-            System.out.println("hit /api/users/profile");
-            // convert user to dto
-            UserDTO userDTO = UserMapper.getUserDTO(user);
+            UserDTO userDTO = userApi.getOrCreateUser(id, email, name);
 
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
@@ -53,6 +45,12 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @GetMapping("/repos")
+    public ResponseEntity<List<GithubRepositoryDTO>> getUserGithubRepositories(@AuthenticationPrincipal Jwt jwt) {
+        List<GithubRepositoryDTO> repos = userApi.getUserRepositories(UUID.fromString(jwt.getClaimAsString("sub")));
+        return new ResponseEntity<>(repos, HttpStatus.OK);
     }
 
 }

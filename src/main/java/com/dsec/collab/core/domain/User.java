@@ -1,5 +1,7 @@
 package com.dsec.collab.core.domain;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class User {
@@ -7,26 +9,15 @@ public class User {
     private String email;
     private String name;
 
-    private boolean githubConnected;
-    private long githubId;
-    private String githubUser;
-    private String githubUrl;
-    private String githubAvatarUrl;
+    private GithubAccessToken githubAccessToken;
+    private GithubProfile githubProfile;
 
-    private boolean isAdmin;
-    private boolean isMember;
-
-    private User(UUID id, String email, String name, boolean githubConnected, long githubId, String githubUser, String githubUrl, String githubAvatarUrl, boolean isModerator, boolean isMember) {
+    private User(UUID id, String email, String name, GithubAccessToken githubAccessToken, GithubProfile githubProfile) {
         this.id = id;
         this.email = email;
         this.name = name;
-        this.githubConnected = githubConnected;
-        this.githubId = githubId;
-        this.githubUser = githubUser;
-        this.githubUrl = githubUrl;
-        this.githubAvatarUrl = githubAvatarUrl;
-        this.isAdmin = isModerator;
-        this.isMember = isMember;
+        this.githubAccessToken = githubAccessToken;
+        this.githubProfile = githubProfile;
     }
 
     public UUID getId() {
@@ -45,89 +36,60 @@ public class User {
         return this.name;
     }
 
-    public void setName() {
+    public void setName(String name) {
         this.name = name;
     }
 
     public boolean isGithubConnected() {
-        return githubConnected;
+        return this.githubAccessToken != null;
     }
 
-    public void setIsGithubConnected(boolean githubConnected) {
-        this.githubConnected = githubConnected;
+    public GithubAccessToken getGithubAccessToken() {
+        return this.githubAccessToken;
     }
 
-    public long getGithubId() {
-        return githubId;
+    public void setGithubAccessToken(GithubAccessToken githubAccessToken) {
+        this.githubAccessToken = githubAccessToken;
     }
 
-    public void setGithubId(long githubId) {
-        this.githubId = githubId;
+    public boolean hasValidToken() {
+        if (githubAccessToken == null) return false;
+
+        return (this.githubAccessToken.getAccessTokenExpiryDate().isAfter(LocalDateTime.now()));
     }
 
-    public String getGithubUser() {
-        return githubUser;
+    public GithubProfile getGithubProfile() {
+        return this.githubProfile;
     }
 
-    public void setGithubUser(String githubUser) {
-        this.githubUser = githubUser;
-    }
-
-    public String getGithubUrl() {
-        return githubUrl;
-    }
-
-    public void setGithubUrl(String githubUrl) {
-        this.githubUrl = githubUrl;
-    }
-
-    public String getGithubAvatarUrl() {
-        return githubAvatarUrl;
-    }
-
-    public void setGithubAvatarUrl(String githubAvatarUrl) {
-        this.githubAvatarUrl = githubAvatarUrl;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setIsAdmin(boolean admin) {
-        isAdmin = admin;
-    }
-
-    public boolean isMember() {
-        return isMember;
-    }
-
-    public void setIsMember(boolean member) {
-        isMember = member;
+    public void setGithubProfile(GithubProfile githubProfile) {
+        this.githubProfile = githubProfile;
     }
 
     public static User create(UUID id, String email, String name) {
         return new User(
-            id,
-            email,
-            name,
-            false,
-            0,
-            null,
-            null,
-            null,
-            false,
-            false
+                Objects.requireNonNull(id),
+                Objects.requireNonNull(email),
+                Objects.requireNonNull(name),
+                null,
+                null
         );
     }
 
-    public static User create(
-        UUID id, String email, String name, boolean githubConnected,
-        long githubId, String githubUser, String githubUrl, String
-        githubAvatarUrl, boolean isModerator, boolean isMember
+    public static User load(
+            UUID id,
+            String email,
+            String name,
+            GithubAccessToken githubAccessToken,
+            GithubProfile githubProfile
     ) {
         return new User(
-            id, email, name, githubConnected, githubId, githubUser, githubUrl, githubAvatarUrl, isModerator, isMember
-        );
+                Objects.requireNonNull(id),
+                Objects.requireNonNull(email),
+                Objects.requireNonNull(name),
+                githubAccessToken,
+                githubProfile );
     }
-
 }
+
+

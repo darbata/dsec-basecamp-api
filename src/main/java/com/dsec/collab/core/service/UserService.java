@@ -1,88 +1,80 @@
 package com.dsec.collab.core.service;
 
-import com.dsec.collab.core.domain.TenantToken;
-import com.dsec.collab.core.domain.TenantUserProfile;
+import com.dsec.collab.adaptor.http.GithubAccessTokenDTO;
+import com.dsec.collab.adaptor.http.GithubProfileDTO;
+import com.dsec.collab.adaptor.http.GithubRepositoryDTO;
+import com.dsec.collab.adaptor.http.UserDTO;
+import com.dsec.collab.core.domain.GithubAccessToken;
+import com.dsec.collab.core.domain.GithubProfile;
 import com.dsec.collab.core.domain.User;
-import com.dsec.collab.core.port.TenantProxy;
-import com.dsec.collab.core.port.UserApi;
-import com.dsec.collab.core.port.UserRepository;
+import com.dsec.collab.core.port.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class UserService implements UserApi {
 
     private final UserRepository userRepository;
-    private final TenantProxy tenantProxy;
+    private final IGithubProxy githubProxy;
+    private final IDTOMapper dtoMapper;
+    private final TokenRefresherApi tokenRefresherApi;
 
-    public UserService(UserRepository userRepository, TenantProxy tenantProxy) {
+    public UserService(UserRepository userRepository, IGithubProxy githubProxy, IDTOMapper dtoMapper, TokenRefresherApi tokenRefresherApi) {
         this.userRepository = userRepository;
-        this.tenantProxy = tenantProxy;
+        this.githubProxy = githubProxy;
+        this.dtoMapper = dtoMapper;
+        this.tokenRefresherApi = tokenRefresherApi;
     }
 
     @Override
-    public User getOrCreateUser(UUID id, String email, String name) {
-       Optional<User> user = userRepository.findById(id);
+    public UserDTO getOrCreateUser(UUID id, String email, String name) {
+        User user = userRepository.findById(id).orElseGet(() -> {
+            try {
+                User newUser = User.create(id, email, name);
+                return userRepository.save(newUser);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return userRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("No user with id: " + id));
+            }
+        });
 
-       if (user.isPresent()) {
-           System.out.println("Found user, returning them");
-           return user.get();
-       } else {
-           System.out.println("User not found, creating new and returning");
-           User newUser = User.create(id, email, name);
-           return userRepository.save(newUser);
-       }
-
+        return dtoMapper.toDTO(user);
     }
 
     @Override
-    public User connectTenant(UUID id, String code) {
-        try {
+    public void connectGithub(UUID id, String code) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("No user with id: " + id)
+        );
 
-            TenantToken tenantToken = this.tenantProxy.tokenExchange(code);
+        GithubAccessTokenDTO tokenDTO = this.githubProxy.tokenExchange(code);
 
-            System.out.println(tenantToken.getAccessToken());
-            System.out.println(tenantToken.getExpiresIn());
-            System.out.println(tenantToken.getRefreshToken());
-            System.out.println(tenantToken.getRefreshTokenExpiresIn());
-            System.out.println(tenantToken.getScope());
-            System.out.println(tenantToken.getTokenType());
+        GithubAccessToken token = dtoMapper.toEntity(tokenDTO);
 
-            // save token to user profile
+        GithubProfileDTO profileDTO = this.githubProxy.queryAuthenticatedUser(token);
 
-            TenantUserProfile tenantUserProfile = this.tenantProxy.queryAuthenticatedUser(tenantToken);
+        GithubProfile profile = dtoMapper.toEntity(profileDTO);
 
-            User user = userRepository.findById(id).orElse(null);
+        user.setGithubAccessToken(token);
 
-            assert user != null;
+        user.setGithubProfile(profile);
 
-            user.setIsGithubConnected(true);
-            user.setGithubId(tenantUserProfile.getTenantId());
-            user.setGithubUser(tenantUserProfile.getTenantUsername());
-            user.setGithubUrl(tenantUserProfile.getTenantUrl());
-            user.setGithubAvatarUrl(tenantUserProfile.getTenantAvatarUrl());
+        userRepository.save(user);
+    }
 
-            return userRepository.save(user);
+    @Override
+    public List<GithubRepositoryDTO> getUserRepositories(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("No user with id: " + id)
+        );
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+        if (!user.hasValidToken()) {
+            tokenRefresherApi.validateToken(user);
         }
+
+        return githubProxy.getUserOwnedRepositories(user.getGithubAccessToken());
     }
-
-    @Override
-    public User putUser(String id, String email, String username) {
-        return null;
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return List.of();
-    }
-
-
-
 }

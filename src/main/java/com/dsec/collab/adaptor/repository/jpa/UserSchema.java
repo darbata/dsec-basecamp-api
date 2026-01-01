@@ -1,8 +1,6 @@
 package com.dsec.collab.adaptor.repository.jpa;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,12 +20,9 @@ public class UserSchema {
     private String email;
     private String name;
 
-    private boolean githubConnected;
-    private long githubId;
-    private String githubUser;
-    private String githubUrl;
-    private String githubAvatarUrl;
+    @OneToOne(mappedBy = "userSchema", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GithubProfileSchema githubProfileSchema;
 
-    private boolean isAdmin;
-    private boolean isMember;
+    @OneToOne(mappedBy = "userSchema", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GithubAccessTokenSchema githubAccessTokenSchema;
 }

@@ -6,13 +6,9 @@ public record UserDTO(
     UUID id,
     String email,
     String name,
-
     boolean githubConnected,
-    long githubId,
-    String githubUser,
+    Long githubId,
+    String githubUserName,
     String githubUrl,
-    String githubAvatarUrl,
-
-    boolean isAdmin,
-    boolean isMember
+    String githubAvatarUrl
 ) {}
